@@ -1,9 +1,9 @@
 import java.util.Scanner;
 
 public class Jogo {
-    private Jogador jogador;        // Objeto jogador
-    private Tabuleiro tabuleiro;    // Objeto tabuleiro
-    private Scanner scanner;       // Para entrada do usuário
+    private Jogador jogador;        // Objeto
+    private Tabuleiro tabuleiro;    // Objeto
+    private Scanner scanner;       
     
     public Jogo() {
         jogador = new Jogador();    // Cria novo jogador
@@ -12,15 +12,14 @@ public class Jogo {
     }
     
     public void iniciar() {
-        // Mensagem inicial
         System.out.println("Bem-vindo ao Caça ao Tesouro!");
         System.out.println("Use W (cima), S (baixo), A (esquerda), D (direita) para se mover.");
         
-        // Loop principal do jogo
+        // começar o jogo
         while (jogador.getMovimentosRestantes() > 0 && tabuleiro.getTesourosRestantes() > 0) {
-            tabuleiro.imprimir(jogador); // Mostra tabuleiro
+            tabuleiro.imprimir(jogador); // mostra tabuleiro
             
-            // Mostra status
+            // mostra como está o jogo
             System.out.println("\nPontos: " + jogador.getPontos());
             System.out.println("Movimentos restantes: " + jogador.getMovimentosRestantes());
             System.out.println("Tesouros restantes: " + tabuleiro.getTesourosRestantes());
@@ -56,7 +55,5 @@ public class Jogo {
         System.out.println("\nFim do jogo!");
         System.out.println("Pontuação final: " + jogador.getPontos());
         System.out.println("Tesouros encontrados: " + (3 - tabuleiro.getTesourosRestantes()));
-        
-        scanner.close(); // Fecha scanner
     }
 }

@@ -1,17 +1,17 @@
 public class Tabuleiro {
-    private ElementoTabuleiro[][] grade;  // Matriz 6x6 de elementos
-    private boolean[][] revelado;         // Matriz 6x6 de células reveladas
-    private int tesourosRestantes;        // Tesouros não encontrados
+    private ElementoTabuleiro[][] grade;  // matriz 6x6 para guardar todos os elementos
+    private boolean[][] revelado;         // matriz 6x6 para marcar por onde já passou
+    private int tesourosRestantes;        // tesouros não encontrados
     
     public Tabuleiro() {
-        grade = new ElementoTabuleiro[6][6];  // Cria matriz 6x6
+        grade = new ElementoTabuleiro[6][6];  // cria uma matriz
         revelado = new boolean[6][6];         // Cria matriz de revelação
         tesourosRestantes = 3;                // 3 tesouros no total
-        inicializarTabuleiro();               // Preenche o tabuleiro
+        inicializarTabuleiro();               // chamada do metodo pra iniciar
     }
     
     private void inicializarTabuleiro() {
-        // Preenche tudo com células vazias inicialmente
+        // tudo vazio
         for (int i = 0; i < 6; i++) {
             for (int j = 0; j < 6; j++) {
                 grade[i][j] = new Vazio();    // Célula vazia
@@ -19,12 +19,13 @@ public class Tabuleiro {
             }
         }
         
-        // Coloca os tesouros em posições aleatórias
+        // coloca os tesouros
         colocarElementos(new Tesouro(), 3);
-        // Coloca as armadilhas em posições aleatórias
+        // coloca as armadilhas
         colocarElementos(new Armadilha(), 3);
     }
     
+    // pra colocar os tesouros e armadilhas de forma aleatoria em um 6x6
     private void colocarElementos(ElementoTabuleiro elemento, int quantidade) {
         int colocados = 0;
         while (colocados < quantidade) {
@@ -38,7 +39,8 @@ public class Tabuleiro {
             }
         }
     }
-    
+
+    //qunado o jogador chega na posição
     public ElementoTabuleiro interagir(int x, int y) {
         if (!revelado[x][y]) {               // Se célula não foi revelada
             revelado[x][y] = true;           // Marca como revelada
@@ -52,21 +54,21 @@ public class Tabuleiro {
         return null;                         // Já foi revelado
     }
     
-    public void imprimir(Jogador jogador) {
-        System.out.println("\nTabuleiro:");
-        for (int y = 0; y < 6; y++) {       // Linhas
-            for (int x = 0; x < 6; x++) {   // Colunas
-                if (x == jogador.getX() && y == jogador.getY()) {
-                    System.out.print("😀 ");  // Mostra jogador
-                } else if (revelado[x][y]) {
-                    System.out.print(grade[x][y].simbolo() + " "); // Elemento revelado
-                } else {
-                    System.out.print("🟦 ");  // Célula não revelada
-                }
+public void imprimir(Jogador jogador) {
+    System.out.println("\nTabuleiro (Posição Atual: [" + jogador.getX() + "," + jogador.getY() + "])");
+    for (int y = 0; y < 6; y++) {
+        for (int x = 0; x < 6; x++) {
+            if (x == jogador.getX() && y == jogador.getY()) {
+                System.out.print("😀 ");
+            } else if (revelado[x][y]) {
+                System.out.print(grade[x][y].simbolo() + " ");
+            } else {
+                System.out.print("⬜ ");
             }
-            System.out.println();           // Nova linha
         }
+        System.out.println();
     }
+}
     
     public int getTesourosRestantes() {
         return tesourosRestantes;            // Retorna tesouros faltantes

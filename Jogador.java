@@ -1,15 +1,17 @@
 public class Jogador {
-    private int x;                   // Posição X no tabuleiro
-    private int y;                   // Posição Y no tabuleiro
+    private int x;                   // colunas
+    private int y;                   // linhas
     private int pontos;              // Pontuação acumulada
     private int movimentosRestantes; // Movimentos que faltam
     
-    public Jogador() {               // Construtor
-        this.x = 0;                  // Começa na posição (0,0)
+    public Jogador() {               
+        this.x = 0;                  
         this.y = 0;
-        this.pontos = 0;             // Pontos inicial zero
-        this.movimentosRestantes = 10; // 10 movimentos totais
+        this.pontos = 0;             // tudo zerado pra inicio do jogo
+        this.movimentosRestantes = 10; // os 10 movimentos
     }
+
+    //usando x e y estilo plano cartesiano
     
     public void mover(char direcao) {
         if (movimentosRestantes <= 0) return; // Se acabaram movimentos, não faz nada
@@ -23,11 +25,19 @@ public class Jogador {
         movimentosRestantes--;      // Gasta um movimento
     }
     
-    // Métodos de acesso (getters)
-    public int getX() { return x; }
-    public int getY() { return y; }
-    public int getPontos() { return pontos; }
-    public int getMovimentosRestantes() { return movimentosRestantes; }
+    // getters
+    public int getX() { 
+        return x; 
+    }
+    public int getY() { 
+        return y; 
+    }
+    public int getPontos() { 
+        return pontos; 
+    }
+    public int getMovimentosRestantes() { 
+        return movimentosRestantes; 
+    }
     
     public void adicionarPontos(int pontos) {
         this.pontos += pontos;      // Adiciona pontos ao total
