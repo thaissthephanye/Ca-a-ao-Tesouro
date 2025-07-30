@@ -1,76 +1,94 @@
+import java.util.Set;
+import java.util.HashSet;
+import java.util.Random;
+
 public class Tabuleiro {
-    private ElementoTabuleiro[][] grade;  // matriz 6x6 para guardar todos os elementos
-    private boolean[][] revelado;         // matriz 6x6 para marcar por onde já passou
-    private int tesourosRestantes;        // tesouros não encontrados
-    
+    private ElementoTabuleiro[][] grade;  // Matriz 6x6 de elementos
+    private Set<String> posicoesVisitadas; // Guarda "x,y" das posições visitadas
+    private Set<String> posicoesTesouros;  // Guarda "x,y" dos tesouros
+    private int tesourosRestantes;         // Quantos tesouros faltam achar
+
     public Tabuleiro() {
-        grade = new ElementoTabuleiro[6][6];  // cria uma matriz
-        revelado = new boolean[6][6];         // Cria matriz de revelação
-        tesourosRestantes = 3;                // 3 tesouros no total
-        inicializarTabuleiro();               // chamada do metodo pra iniciar
+        grade = new ElementoTabuleiro[6][6];
+        posicoesVisitadas = new HashSet<>();
+        posicoesTesouros = new HashSet<>();
+        tesourosRestantes = 3;
+        inicializarTabuleiro();
     }
-    
+
+    // Preenche o tabuleiro com tesouros, armadilhas e vazios
     private void inicializarTabuleiro() {
-        // tudo vazio
+        // Primeiro, tudo é Vazio
         for (int i = 0; i < 6; i++) {
             for (int j = 0; j < 6; j++) {
-                grade[i][j] = new Vazio();    // Célula vazia
-                revelado[i][j] = false;       // Não revelada
+                grade[i][j] = new Vazio();
             }
         }
-        
-        // coloca os tesouros
+
+        // Coloca 3 tesouros aleatórios
         colocarElementos(new Tesouro(), 3);
-        // coloca as armadilhas
+        // Coloca 3 armadilhas aleatórias
         colocarElementos(new Armadilha(), 3);
     }
-    
-    // pra colocar os tesouros e armadilhas de forma aleatoria em um 6x6
+
+    // Coloca elementos (tesouros/armadilhas) aleatoriamente
     private void colocarElementos(ElementoTabuleiro elemento, int quantidade) {
+        Random random = new Random();
         int colocados = 0;
+
         while (colocados < quantidade) {
-            int x = (int)(Math.random() * 6);  // Posição X aleatória (0-5)
-            int y = (int)(Math.random() * 6);  // Posição Y aleatória
-            
-            // Verifica se não é a posição inicial (0,0) e se está vazia
+            int x = random.nextInt(6);  // Número aleatório de 0 a 5
+            int y = random.nextInt(6);
+            String chave = x + "," + y;  // Ex: "2,3"
+
+            // Não coloca em (0,0) e só onde estiver Vazio
             if ((x != 0 || y != 0) && grade[x][y] instanceof Vazio) {
-                grade[x][y] = elemento;  // Coloca o elemento
-                colocados++;             // Incrementa contador
+                grade[x][y] = elemento;
+                if (elemento instanceof Tesouro) {
+                    posicoesTesouros.add(chave);  // Guarda posição do tesouro
+                }
+                colocados++;
             }
         }
     }
 
-    //qunado o jogador chega na posição
+    // Quando o jogador pisa em uma célula
     public ElementoTabuleiro interagir(int x, int y) {
-        if (!revelado[x][y]) {               // Se célula não foi revelada
-            revelado[x][y] = true;           // Marca como revelada
-            ElementoTabuleiro elemento = grade[x][y]; // Pega o elemento
-            
-            if (elemento instanceof Tesouro) {
-                tesourosRestantes--;         // Decrementa tesouros restantes
+        String chave = x + "," + y;
+
+        if (!posicoesVisitadas.contains(chave)) {  // Se NÃO foi visitada
+            posicoesVisitadas.add(chave);          // Marca como visitada
+
+            if (posicoesTesouros.contains(chave)) {  // Se era um tesouro
+                tesourosRestantes--;                // Diminui contador
+                posicoesTesouros.remove(chave);     // Remove do Set
             }
-            return elemento;                 // Retorna o elemento
+
+            return grade[x][y];  // Retorna o elemento (💰, 💣, ou ⬜)
         }
-        return null;                         // Já foi revelado
+        return null;  // Já foi visitada
     }
-    
-public void imprimir(Jogador jogador) {
-    System.out.println("\nTabuleiro (Posição Atual: [" + jogador.getX() + "," + jogador.getY() + "])");
-    for (int y = 0; y < 6; y++) {
-        for (int x = 0; x < 6; x++) {
-            if (x == jogador.getX() && y == jogador.getY()) {
-                System.out.print("😀 ");
-            } else if (revelado[x][y]) {
-                System.out.print(grade[x][y].simbolo() + " ");
-            } else {
-                System.out.print("⬜ ");
+
+    // Mostra o tabuleiro no console
+    public void imprimir(Jogador jogador) {
+        System.out.println("\nTabuleiro (Posição Atual: [" + jogador.getX() + "," + jogador.getY() + "])");
+        for (int y = 0; y < 6; y++) {
+            for (int x = 0; x < 6; x++) {
+                String chave = x + "," + y;
+                if (x == jogador.getX() && y == jogador.getY()) {
+                    System.out.print("😀 ");  // Mostra o jogador
+                } else if (posicoesVisitadas.contains(chave)) {
+                    System.out.print(grade[x][y].simbolo() + " ");  // Mostra elemento revelado
+                } else {
+                    System.out.print("🟦 ");  // Célula não revelada
+                }
             }
+            System.out.println();  // Pula linha
         }
-        System.out.println();
     }
-}
-    
+
+    // Retorna quantos tesouros faltam
     public int getTesourosRestantes() {
-        return tesourosRestantes;            // Retorna tesouros faltantes
+        return tesourosRestantes;
     }
 }
