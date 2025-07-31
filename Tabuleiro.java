@@ -2,12 +2,12 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
-// Representa o tabuleiro do jogo
+//tabuleiro do jogo
 public class Tabuleiro {
-    private ElementoTabuleiro[][] grade;  // Matriz 6x6
-    private Set<String> posicoesVisitadas; // Guarda "x,y" das visitadas
-    private Set<String> posicoesTesouros;  // Guarda onde estão os tesouros
-    private int tesourosRestantes;         // Quantos faltam achar
+    private ElementoTabuleiro[][] grade;  //matriz 6x6
+    private Set<String> posicoesVisitadas; //"x,y" das visitadas
+    private Set<String> posicoesTesouros;  //guarda onde estão os tesouros
+    private int tesourosRestantes;         //quantos faltam achar
 
     public Tabuleiro() {
         grade = new ElementoTabuleiro[6][6];
@@ -32,47 +32,47 @@ public class Tabuleiro {
         colocarElementos(new Armadilha(), 3);
     }
 
-    // Coloca elementos aleatoriamente no tabuleiro
+    //coloca elementos aleatoriamente no tabuleiro
     private void colocarElementos(ElementoTabuleiro elemento, int quantidade) {
         Random random = new Random();
         int colocados = 0;
 
         while (colocados < quantidade) {
-            int x = random.nextInt(6);  // Posição aleatória
+            int x = random.nextInt(6);  
             int y = random.nextInt(6);
             String chave = x + "," + y;
 
-            // Não coloca em (0,0) e só onde estiver vazio
+            //não coloca em (0,0) e só onde estiver vazio
             if ((x != 0 || y != 0) && grade[x][y] instanceof Vazio) {
                 grade[x][y] = elemento;
                 if (elemento instanceof Tesouro) {
-                    posicoesTesouros.add(chave);  // Guarda posição do tesouro
+                    posicoesTesouros.add(chave);  //guarda posição do tesouro
                 }
                 colocados++;
             }
         }
     }
 
-    // Quando o jogador pisa em uma célula
+    //quando o jogador pisa em uma casa
     public ElementoTabuleiro interagir(int x, int y) {
         String chave = x + "," + y;
 
-        // Se não foi visitada ainda
+        //se não foi visitada ainda
         if (!posicoesVisitadas.contains(chave)) {
-            posicoesVisitadas.add(chave);  // Marca como visitada
+            posicoesVisitadas.add(chave);  //marca como visitada
 
-            // Se era um tesouro, diminui o contador
+            //se era tesouro diminui o contador de tesouros
             if (posicoesTesouros.contains(chave)) {
                 tesourosRestantes--;
                 posicoesTesouros.remove(chave);
             }
 
-            return grade[x][y];  // Retorna o que tem na célula
+            return grade[x][y];  // retorna o que tem na casa (vazio armadilha ou tesouro)
         }
-        return null;  // Já foi visitada
+        return null;  // já foi visitada
     }
 
-    // Mostra o tabuleiro no console
+    //mostra o tabuleiro no console
     public void imprimir(Jogador jogador) {
         System.out.println("\nTabuleiro (Posição Atual: [" + jogador.getX() + "," + jogador.getY() + "])");
         
@@ -81,23 +81,23 @@ public class Tabuleiro {
                 String chave = x + "," + y;
                 
                 if (x == jogador.getX() && y == jogador.getY()) {
-                    System.out.print("🤖 ");  // Mostra o jogador
+                    System.out.print("🤖 ");  // jogador
                 } else if (posicoesVisitadas.contains(chave)) {
-                    System.out.print(grade[x][y].simbolo() + " ");  // Mostra elemento revelado
+                    System.out.print(grade[x][y].simbolo() + " ");  //mostra elemento revelado
                 } else {
-                    System.out.print("🏴 ");  // Célula não revelada
+                    System.out.print("🏴 ");  //não revelada
                 }
             }
-            System.out.println();  // Pula linha
+            System.out.println();
         }
     }
 
-    // Retorna as posições já visitadas
+    //as posições já visitadas
     public Set<String> getPosicoesVisitadas() {
         return posicoesVisitadas;
     }
 
-    // Retorna quantos tesouros faltam
+    // quantos tesouros faltam
     public int getTesourosRestantes() {
         return tesourosRestantes;
     }
