@@ -1,12 +1,13 @@
-import java.util.Set;
 import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 
+// Representa o tabuleiro do jogo
 public class Tabuleiro {
-    private ElementoTabuleiro[][] grade;  // Matriz 6x6 de elementos
-    private Set<String> posicoesVisitadas; // Guarda "x,y" das posições visitadas
-    private Set<String> posicoesTesouros;  // Guarda "x,y" dos tesouros
-    private int tesourosRestantes;         // Quantos tesouros faltam achar
+    private ElementoTabuleiro[][] grade;  // Matriz 6x6
+    private Set<String> posicoesVisitadas; // Guarda "x,y" das visitadas
+    private Set<String> posicoesTesouros;  // Guarda onde estão os tesouros
+    private int tesourosRestantes;         // Quantos faltam achar
 
     public Tabuleiro() {
         grade = new ElementoTabuleiro[6][6];
@@ -16,32 +17,32 @@ public class Tabuleiro {
         inicializarTabuleiro();
     }
 
-    // Preenche o tabuleiro com tesouros, armadilhas e vazios
+    // Preenche o tabuleiro com tesouros e armadilhas
     private void inicializarTabuleiro() {
-        // Primeiro, tudo é Vazio
+        // Primeiro coloca tudo como Vazio
         for (int i = 0; i < 6; i++) {
             for (int j = 0; j < 6; j++) {
                 grade[i][j] = new Vazio();
             }
         }
 
-        // Coloca 3 tesouros aleatórios
+        // Coloca os tesouros
         colocarElementos(new Tesouro(), 3);
-        // Coloca 3 armadilhas aleatórias
+        // Coloca as armadilhas
         colocarElementos(new Armadilha(), 3);
     }
 
-    // Coloca elementos (tesouros/armadilhas) aleatoriamente
+    // Coloca elementos aleatoriamente no tabuleiro
     private void colocarElementos(ElementoTabuleiro elemento, int quantidade) {
         Random random = new Random();
         int colocados = 0;
 
         while (colocados < quantidade) {
-            int x = random.nextInt(6);  // Número aleatório de 0 a 5
+            int x = random.nextInt(6);  // Posição aleatória
             int y = random.nextInt(6);
-            String chave = x + "," + y;  // Ex: "2,3"
+            String chave = x + "," + y;
 
-            // Não coloca em (0,0) e só onde estiver Vazio
+            // Não coloca em (0,0) e só onde estiver vazio
             if ((x != 0 || y != 0) && grade[x][y] instanceof Vazio) {
                 grade[x][y] = elemento;
                 if (elemento instanceof Tesouro) {
@@ -56,15 +57,17 @@ public class Tabuleiro {
     public ElementoTabuleiro interagir(int x, int y) {
         String chave = x + "," + y;
 
-        if (!posicoesVisitadas.contains(chave)) {  // Se NÃO foi visitada
-            posicoesVisitadas.add(chave);          // Marca como visitada
+        // Se não foi visitada ainda
+        if (!posicoesVisitadas.contains(chave)) {
+            posicoesVisitadas.add(chave);  // Marca como visitada
 
-            if (posicoesTesouros.contains(chave)) {  // Se era um tesouro
-                tesourosRestantes--;                // Diminui contador
-                posicoesTesouros.remove(chave);     // Remove do Set
+            // Se era um tesouro, diminui o contador
+            if (posicoesTesouros.contains(chave)) {
+                tesourosRestantes--;
+                posicoesTesouros.remove(chave);
             }
 
-            return grade[x][y];  // Retorna o elemento (💰, 💣, ou ⬜)
+            return grade[x][y];  // Retorna o que tem na célula
         }
         return null;  // Já foi visitada
     }
@@ -72,19 +75,26 @@ public class Tabuleiro {
     // Mostra o tabuleiro no console
     public void imprimir(Jogador jogador) {
         System.out.println("\nTabuleiro (Posição Atual: [" + jogador.getX() + "," + jogador.getY() + "])");
+        
         for (int y = 0; y < 6; y++) {
             for (int x = 0; x < 6; x++) {
                 String chave = x + "," + y;
+                
                 if (x == jogador.getX() && y == jogador.getY()) {
-                    System.out.print("😀 ");  // Mostra o jogador
+                    System.out.print("🤖 ");  // Mostra o jogador
                 } else if (posicoesVisitadas.contains(chave)) {
                     System.out.print(grade[x][y].simbolo() + " ");  // Mostra elemento revelado
                 } else {
-                    System.out.print("🟦 ");  // Célula não revelada
+                    System.out.print("🏴 ");  // Célula não revelada
                 }
             }
             System.out.println();  // Pula linha
         }
+    }
+
+    // Retorna as posições já visitadas
+    public Set<String> getPosicoesVisitadas() {
+        return posicoesVisitadas;
     }
 
     // Retorna quantos tesouros faltam
